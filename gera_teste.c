@@ -3,6 +3,39 @@
 #include <time.h>
 
 
+time_t capturar_timestamp_valido();
+
+char *gerar_nome();
+
+double gerar_num();
+
+time_t gerar_timestamp_aleatorio(int dia, int mes, int ano);
+
+int main(void){
+  FILE *fp;
+  struct tm *timenow;
+  time_t clock;
+
+  srand(time(NULL));
+
+  fp = fopen("test.txt", "w");
+  if(fp==NULL){
+    perror("error ao abrir o arquivo");
+    return -1;
+  }
+  clock=capturar_timestamp_valido();
+  timenow=localtime(&clock);
+  for(int i=0;i<1000;i++){
+    time_t randTimestamp=gerar_timestamp_aleatorio(timenow->tm_mday,timenow->tm_mon+1,timenow->tm_year+1900);
+    fprintf(fp,"%ld %s %.2lf\n",randTimestamp,gerar_nome(),gerar_num());
+  }
+    #ifdef wantToKnow
+    printf("%d\\%d\\%d",timenow->tm_mday,timenow->tm_mon+1,timenow->tm_year+1900);
+    #endif
+
+  fclose(fp);
+  return 0;
+}
 
 time_t capturar_timestamp_valido() {
   int dia, mes, ano, hora, min, seg;
@@ -40,7 +73,7 @@ char *gerar_nome(){
 }
 
 double gerar_num(){
-  return ((double)rand())/100;
+  return ((double)rand())/ RAND_MAX*(100-1)+1;
 } 
 
 time_t gerar_timestamp_aleatorio(int dia, int mes, int ano) {
@@ -74,27 +107,4 @@ time_t gerar_timestamp_aleatorio(int dia, int mes, int ano) {
   time_t timestamp_aleatorio = timestamp_inicial + rand() % (timestamp_final - timestamp_inicial + 1);
 
   return timestamp_aleatorio;
-}
-
-int main(void){
-  FILE *fp;
-  struct tm *timenow;
-  time_t clock;
-
-  srand(time(NULL));
-
-  fp = fopen("test.txt", "w");
-  if(fp==NULL){
-    perror("error ao abrir o arquivo");
-    return -1;
-  }
-  clock=capturar_timestamp_valido();
-  timenow=localtime(&clock);
-  for(int i=0;i<1000;i++){
-    time_t randTimestamp=gerar_timestamp_aleatorio(timenow->tm_year,timenow->tm_mon+1,timenow->tm_year+1900);
-    fprintf(fp,"%ld %s %.2lf\n",randTimestamp,gerar_nome(),gerar_num());
-  }
-
-  fclose(fp);
-  return 0;
 }
